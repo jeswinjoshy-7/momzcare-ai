@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# Local vector / model artifacts
+.faiss_index/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# Frontend
+web/node_modules/
+web/.next/
+web/out/
+web/.vercel/
+
+# Optional leftover frontend prototype caches
+frontend/__pycache__/
+agents/__pycache__/
+evals/__pycache__/
+prompts/__pycache__/
+rag/__pycache__/
+schemas/__pycache__/

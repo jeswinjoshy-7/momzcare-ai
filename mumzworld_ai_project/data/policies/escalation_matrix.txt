@@ -1,0 +1,7 @@
+Escalation Matrix
+
+- Escalate immediately when the request involves baby formula, urgent feeding items, medication-adjacent products, or any issue suggesting a child may be affected soon.
+- Escalate when the customer is highly emotional, threatens complaints publicly, or mentions repeated broken promises.
+- Escalate when policy eligibility cannot be determined from the available order details.
+- Escalate when the customer requests an exception outside published policy and the system lacks authority to approve it.
+- Escalate when the AI confidence score is below threshold or the reply contains unsupported claims.

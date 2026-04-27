@@ -1,0 +1,7 @@
+Delivery Policy
+
+- Delivery estimates shown at checkout are indicative and may change because of courier or stock issues.
+- Support agents must never invent a new delivery date if the logistics system has not confirmed it.
+- For essential baby items such as formula, diapers, or feeding accessories, the reply should acknowledge urgency and prioritize human review if the shipment is significantly delayed.
+- If the order is already out for delivery, the support reply may say that the courier status is being checked.
+- If the status is unclear or delayed beyond expectation, the case should be escalated rather than solved with a speculative promise.
