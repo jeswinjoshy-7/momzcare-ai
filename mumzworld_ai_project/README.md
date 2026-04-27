@@ -1,6 +1,13 @@
-# ArabicCare AI
+# MomzCare
 
-ArabicCare AI is a multilingual trust layer for Mumzworld-style customer support. It takes a customer complaint plus a rough support draft, retrieves relevant policy/examples, rewrites the reply into safer and more natural customer-facing language, validates the reply against policy, and escalates when confidence is low.
+
+
+
+
+<img width="1290" height="885" alt="Screenshot From 2026-04-28 00-57-58" src="https://github.com/user-attachments/assets/dce41ed7-513d-4987-a37b-2184f6efa252" />
+
+
+MomzCareAI is a multilingual trust layer for Mumzworld-style customer support. It takes a customer complaint plus a rough support draft, retrieves relevant policy/examples, rewrites the reply into safer and more natural customer-facing language, validates the reply against policy, and escalates when confidence is low.
 
 This project was built for a take-home assessment with these explicit constraints:
 
