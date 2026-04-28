@@ -11,6 +11,8 @@
 <img width="1290" height="885" alt="Screenshot From 2026-04-28 00-57-58" src="https://github.com/user-attachments/assets/dce41ed7-513d-4987-a37b-2184f6efa252" />
 
 
+
+
 MomzCareAI is a multilingual trust layer designed for Mumzworld-style customer support operations. Its purpose is to improve the safety, quality, and reliability of customer support replies before they reach the customer.
 
 Instead of functioning as a general chatbot, the system acts as an intelligent control layer between a customer complaint and the final customer-facing response.
@@ -188,6 +190,10 @@ The system returns both:
 This architecture prioritizes explainability over black-box generation.
 
 ---
+
+<img width="536" height="876" alt="Screenshot 2026-04-28 091037" src="https://github.com/user-attachments/assets/39a7d8d5-4b8c-4df6-aa5d-cca6cef602fc" />
+
+
 
 ## Why This Architecture Was Selected
 
