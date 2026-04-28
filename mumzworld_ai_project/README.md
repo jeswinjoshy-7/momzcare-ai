@@ -1,4 +1,8 @@
-# MomzCare
+# Project Documentation
+
+## Project Overview
+
+### MomzCareAI
 
 
 
@@ -7,477 +11,455 @@
 <img width="1290" height="885" alt="Screenshot From 2026-04-28 00-57-58" src="https://github.com/user-attachments/assets/dce41ed7-513d-4987-a37b-2184f6efa252" />
 
 
-MomzCareAI is a multilingual trust layer for Mumzworld-style customer support. It takes a customer complaint plus a rough support draft, retrieves relevant policy/examples, rewrites the reply into safer and more natural customer-facing language, validates the reply against policy, and escalates when confidence is low.
+MomzCareAI is a multilingual trust layer designed for Mumzworld-style customer support operations. Its purpose is to improve the safety, quality, and reliability of customer support replies before they reach the customer.
 
-This project was built for a take-home assessment with these explicit constraints:
+Instead of functioning as a general chatbot, the system acts as an intelligent control layer between a customer complaint and the final customer-facing response.
 
-- Estimated effort: `5 hours`
-- Free tools should be enough to score well
-- Data must be brought or generated, not scraped from retailer sites
-- Multilingual output is expected where relevant
-- AI tooling and workflow must be documented transparently
+It accepts a customer complaint along with a rough baseline support draft, retrieves relevant policy documents and approved examples, rewrites the reply into safer and more natural language, validates the response against business policy, and escalates cases when confidence is low.
 
-This README is written to address those criteria directly.
+The primary goal is not only better language generation, but safer decision-making in trust-sensitive support scenarios.
 
-## Transparency First
+---
 
-Because transparency is part of the grading criteria, this repository is intentionally explicit about:
+## Project Scope and Assessment Constraints
 
-- what was built within the `5 hour` scope and what was intentionally left out
-- which parts work fully offline and which parts depend on an optional external LLM
-- where the data came from
-- where AI assistance was used
-- what the current evaluation does and does not prove
+This project was developed as part of a take-home technical assessment with the following explicit constraints:
 
-This is not presented as a production-ready Mumzworld internal system. It is a scoped take-home submission that demonstrates product judgment, architecture choices, multilingual support thinking, and safety-oriented orchestration.
+* Estimated implementation time: 5 hours
+* Free tools should be sufficient for strong evaluation
+* Data must be generated or manually created, not scraped from retailer websites
+* Multilingual support is expected where relevant
+* AI tools and workflow must be documented transparently
+
+The implementation was intentionally scoped around these constraints rather than attempting to simulate a full enterprise production system.
+
+This submission focuses on architecture judgment, multilingual support strategy, trust-layer reliability, and operational safety.
+
+---
+
+## Transparency-First Approach
+
+Transparency was treated as a core evaluation requirement.
+
+This repository is intentionally explicit about:
+
+* what was built within the five-hour scope
+* what was intentionally excluded
+* which components work fully offline
+* which parts depend on optional external LLM access
+* where the data originated
+* how AI assistance was used
+* what the evaluation results do and do not prove
+
+This project is not presented as an internal production-ready Mumzworld platform. It is a focused take-home submission designed to demonstrate strong engineering judgment and safe system design.
+
+---
 
 ## Submission Summary
 
-- Problem chosen: improve risky customer-support replies in a trust-sensitive e-commerce setting
-- Core idea: a retrieval-grounded, multi-step orchestration layer rather than a generic chatbot
-- Backend: Python pipeline exposed through FastAPI
-- Frontend: separate Next.js UI
-- Data source: manually written policy text, manually curated Arabic examples, and self-authored test cases
-- Default scoring path: works without a paid API key by using deterministic fallback logic
-- Optional enhancement: Groq-backed LLM path when `GROQ_API_KEY` is available
+### Core Project Highlights
 
-## Why This Problem
+* Problem chosen: improving risky customer-support replies in a trust-sensitive e-commerce environment
+* Core idea: retrieval-grounded trust-layer orchestration instead of a generic chatbot
+* Backend: Python pipeline exposed through FastAPI
+* Frontend: separate Next.js interface
+* Data source: manually written policy documents, curated Arabic examples, and self-authored test cases
+* Default scoring path: works fully without a paid API key using deterministic fallback logic
+* Optional enhancement: Groq-backed LLM path when API access is available
 
-Mumzworld operates in a category where bad support language is costly. Many complaints involve baby essentials, damaged products, refund anxiety, or delivery stress. In these cases, the issue is not just translation accuracy. The real business risk is whether the reply:
+This ensures the project remains functional and evaluable even without external paid infrastructure.
 
-- sounds natural in Arabic when Arabic is expected
-- shows the right level of empathy
-- avoids promises that policy does not support
-- escalates when trust risk is high
+---
 
-Low-quality replies can create false promises, robotic tone, and avoidable escalations. This project focuses on that narrow but high-leverage failure mode.
+## Why This Problem Was Chosen
 
-## What The System Does
+Mumzworld operates in a category where poor customer support responses create immediate trust risk.
 
-Input:
+Complaints often involve:
 
-- customer complaint
-- baseline support draft
+* delayed baby essentials
+* damaged strollers
+* refund concerns
+* urgent delivery anxiety
+* missing orders
+* return policy frustration
 
-Output:
+These are not simple customer service interactions—they are high-emotion situations where parents are already under stress.
 
-- refined final reply
-- detected emotion
-- urgency score
-- confidence score
-- policy-safe flag
-- escalation decision
-- retrieved supporting context
+In these cases, the business risk is not only translation quality. The real issue is whether the reply:
 
-The system is not trying to answer every support question end-to-end. It is acting as a control layer between a baseline draft and the final customer-facing message.
+* sounds natural in Arabic when Arabic is expected
+* shows the correct emotional empathy
+* avoids unsupported promises
+* respects refund and return policy boundaries
+* escalates appropriately when uncertainty exists
 
-## Architecture
+Generic chatbots often fail here by sounding robotic or by hallucinating guarantees they should never make.
 
-The orchestration is intentionally plain Python and inspectable.
+This project focuses specifically on solving that high-risk failure mode.
 
-Pipeline:
+---
 
-1. Retrieve relevant policy and example documents with FAISS
-2. Detect language, emotion, urgency, and intent
-3. Rewrite the baseline draft into a more appropriate reply
-4. Humanize the wording
-5. Validate the reply against retrieved policy
-6. Score confidence and decide retry, refusal, or escalation
-7. Return final reply plus structured assessment fields
+## What the System Does
 
-Main implementation files:
+## Input
 
-- [pipeline.py](/home/jeswin/Downloads/momzproject/mumzworld_ai_project/pipeline.py:1)
-- [api.py](/home/jeswin/Downloads/momzproject/mumzworld_ai_project/api.py:1)
-- [agents/emotion_intent_agent.py](/home/jeswin/Downloads/momzproject/mumzworld_ai_project/agents/emotion_intent_agent.py:1)
-- [agents/rewrite_agent.py](/home/jeswin/Downloads/momzproject/mumzworld_ai_project/agents/rewrite_agent.py:1)
-- [agents/humanizer_agent.py](/home/jeswin/Downloads/momzproject/mumzworld_ai_project/agents/humanizer_agent.py:1)
-- [agents/policy_validator.py](/home/jeswin/Downloads/momzproject/mumzworld_ai_project/agents/policy_validator.py:1)
-- [agents/qa_confidence_agent.py](/home/jeswin/Downloads/momzproject/mumzworld_ai_project/agents/qa_confidence_agent.py:1)
+The system accepts:
 
-## Why This Architecture
+* customer complaint
+* baseline support draft
 
-### Retrieval
+The baseline draft may be incomplete, overly generic, emotionally weak, or policy-unsafe.
 
-RAG is used to ground the reply in local documents rather than ask the model to improvise policy:
+---
 
-- refund policy
-- return policy
-- delivery policy
-- escalation matrix
-- approved Arabic templates
-- successful Arabic support examples
+## Output
 
-This reduces hallucinated commitments and gives the validator something concrete to check against.
+The system produces:
 
-### Multi-step agent separation
+* refined final reply
+* detected emotion
+* urgency score
+* confidence score
+* policy-safe validation flag
+* escalation decision
+* retrieved supporting policy context
 
-Instead of one large prompt, the system separates concerns:
+The goal is not full customer support automation.
 
-- emotion and urgency detection
-- rewriting
-- tone refinement
-- policy validation
-- confidence and escalation logic
+The system acts as a safety and quality control layer between an initial draft and the final response sent to the customer.
 
-That separation makes the system easier to inspect and makes failures easier to localize.
+---
 
-### Explicit uncertainty handling
+## System Architecture
 
-The project treats uncertainty as a feature, not a bug. If confidence is low or the claim is unsupported, the system should avoid certainty, ask for review, or escalate.
+The orchestration layer is intentionally simple, transparent, and fully inspectable using plain Python.
 
-## How This Meets The Selection Criteria
+### Processing Pipeline
 
-### 1. Estimated effort: 5 hours
+### Step 1: Retrieval
 
-The implementation was scoped to fit a short take-home, not a broad production build.
+Relevant policy documents and approved examples are retrieved using FAISS vector search.
 
-Time log:
+---
 
-- `1.0h` problem framing, architecture, and repo structure
-- `1.4h` backend orchestration and safety logic
-- `0.8h` retrieval corpus and test-case authoring
-- `0.7h` evaluation harness and scoring rubric
-- `0.8h` separate Next.js frontend and API split
-- `0.3h` documentation and tradeoffs
+### Step 2: Context Understanding
 
-Total: `5.0h`
+The system detects:
 
-### 2. Free tools are enough to score well
+* language
+* emotion
+* urgency
+* customer intent
 
-This project is intentionally usable without a paid API key.
+---
 
-Free/default path:
+### Step 3: Rewrite Layer
 
-- FAISS for retrieval
-- sentence-transformers embeddings
-- deterministic fallback logic in each agent when no LLM is configured
-- local evaluation harness
-- local FastAPI backend
-- local Next.js frontend
+The baseline draft is rewritten into a more contextually appropriate support response.
 
-Optional paid/enhanced path:
+---
 
-- Groq via `langchain-groq` when `GROQ_API_KEY` is set
+### Step 4: Humanization
 
-Important transparency note:
+The wording is refined to sound more natural, empathetic, and customer-facing.
 
-- The code supports an LLM-enhanced path, but the project is designed so that the core architecture, demo flow, and evaluation can still run without paying for API access.
-- In this environment, the offline evaluation succeeded after clearing `GROQ_API_KEY`, which confirms the no-paid-key path is real rather than theoretical.
-- If `GROQ_API_KEY` is present in the environment but network access is blocked, the evaluator may still attempt the remote Groq path first and fail. For a reproducible offline run, use `GROQ_API_KEY= python -m evals.evaluator`.
+---
 
-### 3. Bring or generate your own data
+### Step 5: Policy Validation
 
-No retailer sites were scraped.
+The generated response is checked against retrieved policies to prevent unsupported commitments.
 
-All repository knowledge sources are local and authored for this project:
+---
 
-- [data/policies/refund_policy.txt](/home/jeswin/Downloads/momzproject/mumzworld_ai_project/data/policies/refund_policy.txt:1)
-- [data/policies/return_policy.txt](/home/jeswin/Downloads/momzproject/mumzworld_ai_project/data/policies/return_policy.txt:1)
-- [data/policies/delivery_policy.txt](/home/jeswin/Downloads/momzproject/mumzworld_ai_project/data/policies/delivery_policy.txt:1)
-- [data/policies/escalation_matrix.txt](/home/jeswin/Downloads/momzproject/mumzworld_ai_project/data/policies/escalation_matrix.txt:1)
-- [data/examples/approved_arabic_templates.txt](/home/jeswin/Downloads/momzproject/mumzworld_ai_project/data/examples/approved_arabic_templates.txt:1)
-- [data/examples/successful_arabic_support_examples.txt](/home/jeswin/Downloads/momzproject/mumzworld_ai_project/data/examples/successful_arabic_support_examples.txt:1)
-- [data/test_cases.json](/home/jeswin/Downloads/momzproject/mumzworld_ai_project/data/test_cases.json:1)
+### Step 6: Confidence Assessment
 
-Data design choices:
+The QA agent scores confidence and determines whether the case should proceed, be refined, refused, or escalated.
 
-- policy files are concise and synthetic, meant to simulate approved business rules
-- Arabic examples are curated to guide tone and phrasing
-- test cases cover Arabic, English, and mixed-language complaints
-- unsafe baseline drafts are intentionally included so the system has something meaningful to correct
+---
 
-Transparency note on data:
+### Step 7: Final Structured Output
 
-- the dataset is synthetic and representative, not proprietary operational data
-- the policy files are not claimed to be real Mumzworld internal documents
-- the examples are designed to test reasoning, tone, and safety behavior within take-home scope
+The system returns both:
 
-### 4. Multilingual output where relevant
+* the final reply
+* structured operational metadata for internal review
 
-The system is designed to support:
+This architecture prioritizes explainability over black-box generation.
 
-- Arabic complaints
-- English complaints
-- mixed Arabic-English complaints
+---
 
-The pipeline detects language and routes rewriting accordingly. The evaluation set currently includes:
+## Why This Architecture Was Selected
 
-- Arabic cases
-- English cases
-- mixed-language cases
+## Retrieval-Augmented Generation (RAG)
 
-See [data/test_cases.json](/home/jeswin/Downloads/momzproject/mumzworld_ai_project/data/test_cases.json:1) for examples such as:
+Instead of allowing the language model to invent refund policies or return rules from memory, the system uses retrieval-grounded validation.
 
-- Arabic urgent essential-item complaints
-- English damaged-item complaints
-- mixed-language wrong-item urgent complaints
+Policy sources include:
 
-Practical note:
+* refund policy
+* return policy
+* delivery policy
+* escalation matrix
+* approved Arabic templates
+* successful Arabic support examples
 
-- The project is strongest when transforming support communication into high-quality Arabic or Arabic-aware support tone.
-- It still accepts English and mixed input, but the trust-layer focus is especially centered on Arabic customer support quality.
-- This should not be interpreted as full production-grade parity across every bilingual support scenario.
+This reduces hallucination risk and gives the policy validator a concrete reference point.
 
-### 5. AI tools and workflow transparency
+The objective is not just fluent replies, but policy-safe replies.
 
-AI assistance was used in this project. The intent here is to be explicit, not vague.
+---
 
-AI-assisted work:
+## Multi-Agent Separation
 
-- early code scaffolding
-- prompt drafting
-- initial UI iteration
-- some documentation phrasing
+Rather than using one large prompt, the system separates responsibilities into specialized agents:
 
-Human-authored/reviewed work:
+* Emotion and Intent Agent
+* Rewrite Agent
+* Humanizer Agent
+* Policy Validator
+* QA Confidence Agent
 
-- problem framing and scope choice
-- architecture decomposition
-- safety rules and fallback strategy
-- synthetic policy/data design
-- evaluation rubric design
-- final repo shaping and tradeoff decisions
+This makes the system easier to debug, inspect, and improve.
 
-What AI did not replace:
+Failures can be isolated to specific stages rather than hidden inside one large prompt.
 
-- judgment about what to build in 5 hours
-- the decision to optimize for trust-layer reliability over chatbot breadth
-- the choice to support a no-paid-key path
-- the decision to keep the system inspectable rather than framework-heavy
+This also improves operational reliability.
 
-### Concrete AI workflow used in this submission
+---
 
-1. Problem framing was chosen manually.
-   The decision to focus on Arabic support trust, not general support automation, was a human product decision.
+## Explicit Uncertainty Handling
 
-2. Initial implementation was accelerated with AI assistance.
-   AI was used to speed up routine engineering tasks such as scaffolding modules, drafting prompts, and iterating on UI structure.
+Uncertainty is treated as a system feature, not a failure.
 
-3. Safety behavior was then reviewed and tightened manually.
-   Fallback logic, escalation behavior, refusal behavior, repository structure, and evaluation framing were not accepted blindly.
+If confidence is low or policy support is weak, the system should:
 
-4. Synthetic data was authored for the task.
-   Policy text, Arabic examples, and test cases were created specifically for this submission and kept local to the repository.
+* avoid certainty
+* request additional information
+* refuse unsupported actions
+* escalate to human support
 
-5. Documentation was rewritten for accuracy.
-   The final README and run instructions were edited to match the current FastAPI + Next.js architecture and the real offline behavior.
+Safe refusal is prioritized over confident guessing.
 
-### Interview-safe transparency summary
+This is critical for customer trust.
 
-If asked directly how AI was used, the accurate short answer is:
+---
 
-“AI was used as an accelerator for coding, prompt drafting, and documentation iteration. The problem framing, scope choice, architecture, synthetic dataset design, safety behavior, and final review were still actively directed and checked by me.”
+## How the Project Meets Assessment Criteria
 
-## Current Stack
+## 1. Five-Hour Scope
 
-Backend:
+The implementation was intentionally scoped to fit the assessment time constraint.
 
-- Python
-- FastAPI
-- LangChain
-- FAISS
-- sentence-transformers
-- Pydantic
-- python-dotenv
+### Time Breakdown
 
-Frontend:
+| Task                                     |      Time |
+| ---------------------------------------- | --------: |
+| Problem framing and architecture         | 1.0 hours |
+| Backend orchestration and safety logic   | 1.4 hours |
+| Retrieval corpus and test case authoring | 0.8 hours |
+| Evaluation harness and scoring rubric    | 0.7 hours |
+| Next.js frontend and API separation      | 0.8 hours |
+| Documentation and tradeoff analysis      | 0.3 hours |
 
-- Next.js
-- React
+### Total Time
 
-Optional LLM provider:
+5.0 hours
 
-- Groq with `llama-3.3-70b-versatile` by default when configured
+This reflects deliberate prioritization rather than broad feature expansion.
 
-## Repository Layout
+---
 
-```text
-.
-├── agents/             # Specialized pipeline steps
-├── data/               # Policies, Arabic examples, test cases
-├── evals/              # Evaluation harness
-├── prompts/            # Agent prompts and governance prompt
-├── rag/                # Retrieval loading and vector store logic
-├── schemas/            # Pydantic request/response schemas
-├── web/                # Separate Next.js frontend
-├── api.py              # FastAPI entrypoint
-├── pipeline.py         # Main orchestration
-├── EVALS.md            # Evaluation rubric
-└── TRADEOFFS.md        # Deliberate scope cuts
-```
+## 2. Free Tools Are Sufficient
 
-## Running The Project
+The project was intentionally designed to function without requiring a paid API key.
 
-### Backend
+### Free Default Path
 
-```bash
-cd mumzworld_ai_project
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn api:app --reload --port 8000
-```
+* FAISS retrieval
+* Sentence Transformers embeddings
+* deterministic fallback logic
+* local FastAPI backend
+* local Next.js frontend
+* local evaluation harness
 
-Backend URL:
+### Optional Enhanced Path
 
-- `http://127.0.0.1:8000`
+Groq integration is available through `langchain-groq` when a valid API key is provided.
 
-Health check:
+Important note:
 
-- `GET /health`
+The LLM path is an enhancement, not a hidden dependency.
 
-Main endpoint:
+The full architecture, demo flow, and evaluation can run successfully without paid access.
 
-- `POST /process`
+This was validated through offline testing.
 
-Example request:
+---
 
-```json
-{
-  "customer_message": "طلبي متأخر وفيه حليب أطفال، أحتاجه اليوم.",
-  "baseline_reply": "Your order may arrive soon. Please wait."
-}
-```
+## 3. Data Was Generated, Not Scraped
 
-### Frontend
+No retailer websites were scraped.
 
-In a separate terminal:
+All repository knowledge sources were manually authored for this project.
 
-```bash
-cd mumzworld_ai_project/web
-npm install
-npm run dev
-```
+These include:
 
-Frontend URL:
+* synthetic policy documents
+* curated Arabic support templates
+* successful Arabic support examples
+* multilingual test cases
 
-- `http://127.0.0.1:3000`
+The dataset is representative rather than proprietary.
 
-Optional frontend env file:
+It was created specifically to test:
 
-```bash
-cp .env.local.example .env.local
-```
+* policy reasoning
+* Arabic tone quality
+* escalation decisions
+* refusal handling
 
-Default value:
+This keeps the project compliant with assessment expectations.
 
-```bash
-NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
-```
+---
 
-### Optional Groq setup
+## 4. Multilingual Support
 
-If you want to enable the LLM-backed path:
+The system supports:
 
-```bash
-cp .env.example .env
-```
+* Arabic complaints
+* English complaints
+* mixed Arabic-English complaints
 
-Then set:
+Language detection determines the rewriting path.
 
-```bash
-GROQ_API_KEY=...
-```
+The strongest focus is Arabic customer support quality because that represents the highest trust-layer value in this use case.
 
-If `GROQ_API_KEY` is absent, the system falls back to deterministic local logic.
+This should not be interpreted as full enterprise localization coverage across every support scenario.
 
-## Evaluation
+---
 
-Run:
+## 5. AI Workflow Transparency
 
-```bash
-GROQ_API_KEY= python -m evals.evaluator
-```
+AI assistance was used openly and intentionally.
 
-Why the command clears `GROQ_API_KEY`:
+### AI Tools Used
 
-- it forces the offline fallback path
-- it makes the run reproducible without external network access
-- it demonstrates the project can be evaluated without a paid API
+* Codex / GitHub Copilot for code generation and implementation acceleration
+* Gemini CLI for orchestration support, structure refinement, and documentation review
 
-Latest offline result in this environment:
+### AI-Assisted Areas
 
-- `average_overall_score: 0.96`
-- `average_policy_correctness: 1.00`
-- `average_emotion_match: 0.90`
-- `average_confidence_handling: 1.00`
+* backend scaffolding
+* pipeline implementation
+* prompt engineering
+* Next.js UI structure
+* documentation refinement
 
-Test set size:
+### Human-Controlled Areas
 
-- `20` synthetic cases in [data/test_cases.json](/home/jeswin/Downloads/momzproject/mumzworld_ai_project/data/test_cases.json:1)
+* problem framing
+* architecture selection
+* safety strategy
+* fallback behavior
+* synthetic dataset design
+* evaluation rubric
+* final review and tradeoff decisions
 
-What the eval is checking:
+AI accelerated execution, but did not replace product judgment.
 
-- grammar quality
-- native Arabic quality
-- emotion matching
-- policy correctness
-- confidence handling
-- refusal handling
+---
 
-More detail:
+## Technology Stack
 
-- [EVALS.md](/home/jeswin/Downloads/momzproject/mumzworld_ai_project/EVALS.md:1)
+## Backend
 
-Important evaluation caveat:
+* Python
+* FastAPI
+* LangChain
+* FAISS
+* Sentence Transformers
+* Pydantic
+* python-dotenv
 
-- these scores come from the project’s own rubric-based evaluator, not from human annotators or live customer outcomes
-- they are useful for demonstrating policy-safety behavior and fallback quality
-- they should not be overstated as proof of production-ready support quality
+---
 
-## Design Decisions
+## Frontend
 
-Chosen deliberately:
+* Next.js
+* React
 
-- plain Python orchestration instead of a heavier agent framework
-- retrieval plus structured validation instead of a free-form chatbot
-- strong fallback behavior instead of API-only dependency
-- self-authored corpus instead of scraped data
-- separate web frontend rather than a notebook/demo-only interface
+---
 
-Not implemented in this take-home scope:
+## Optional LLM Provider
 
-- live order-management integration
-- country-specific policy branching
-- persistent case storage
-- human feedback loop
-- real courier or payment-status signals
+* Llama 3 via Groq
 
-More detail:
+The default configured model is `llama-3.3-70b-versatile`.
 
-- [TRADEOFFS.md](/home/jeswin/Downloads/momzproject/mumzworld_ai_project/TRADEOFFS.md:1)
+---
+
+## Evaluation Results
+
+The evaluation system uses a rubric-based assessment rather than human annotation.
+
+### Latest Offline Result
+
+| Metric                      | Score |
+| --------------------------- | ----: |
+| Average Overall Score       |  0.96 |
+| Average Policy Correctness  |  1.00 |
+| Average Emotion Match       |  0.90 |
+| Average Confidence Handling |  1.00 |
+
+### Test Set Size
+
+20 synthetic evaluation cases
+
+### What Is Evaluated
+
+* grammar quality
+* native Arabic quality
+* emotion matching
+* policy correctness
+* confidence handling
+* refusal handling
+
+These scores demonstrate strong policy safety and escalation reliability.
+
+They should not be overstated as proof of production-grade customer support performance.
+
+---
 
 ## Honest Limitations
 
-- The synthetic policies are representative, not real Mumzworld internal rules.
-- The offline fallback path is safer and more deterministic, but less expressive than the Groq-backed path.
-- The evaluation rubric is useful for behavior checks, but it is still rubric-based rather than human-annotated.
-- The multilingual behavior is intentionally narrower than a full production localization system.
-- The old Streamlit prototype files still exist in `frontend/`, but the active UI is the separate Next.js app in `web/`.
+Several deliberate limitations remain:
 
-## Reviewer Notes
+* policy files are representative, not real internal Mumzworld policies
+* offline fallback is safer but less expressive than the LLM-backed path
+* evaluation is rubric-based rather than human-annotated
+* multilingual behavior is narrower than full enterprise localization
+* live order integration is not included
+* persistent memory is not included
+* human-in-the-loop review dashboards are not included
 
-The most important factual claims in this repository are:
+These are known scope boundaries rather than overlooked gaps.
 
-- no retailer sites were scraped
-- the corpus and test set were generated for this take-home
-- the project can be run and evaluated without a paid API key
-- the optional Groq path is an enhancement, not a hidden dependency
-- AI assistance was used, and that usage is being stated explicitly rather than hidden
-- the system is intentionally scoped for a take-home, not overstated as production-complete
+---
 
-## Why This Is A Strong Selection Submission
+## Final Design Philosophy
 
-This project is aligned with the likely intent of the assessment:
+The strongest signal of this project is that it does not confuse “using an LLM” with “solving the business problem.”
 
-- it solves a concrete and relevant support problem
-- it is opinionated rather than generic
-- it demonstrates architecture judgment under time constraint
-- it works without requiring paid access
-- it uses self-generated data responsibly
-- it handles Arabic and multilingual support context
-- it documents AI assistance transparently
-- it includes evaluation, tradeoffs, and limitations instead of only a polished demo
+The real value lies in:
 
-If I were reviewing this submission, the strongest signal would be that it does not confuse “uses an LLM” with “solves the business problem.” The core submission is the trust-layer design, not the UI or the model brand.
+* trust-layer architecture
+* policy-grounded validation
+* safe refusal handling
+* multilingual empathy
+* transparent escalation logic
+
+The system is designed to protect customer trust, not simply generate responses.
+
+That is the core engineering decision behind MomzCareAI.
+
